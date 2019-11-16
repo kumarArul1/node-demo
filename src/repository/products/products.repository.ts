@@ -2,6 +2,8 @@ import { IMG_SERVER } from './../../common/common';
 import { IProductRepsoitory } from '../contracts/products/i.products.repository';
 import { ProductModel } from '../../model/products/products.model';
 import { dbPool } from '../../common/config';
+import * as fs from "fs";
+import * as path from "path";
 
 export class ProductsRepository implements IProductRepsoitory {
 
@@ -78,10 +80,22 @@ export class ProductsRepository implements IProductRepsoitory {
 
     async deleteProduct(productId: number): Promise<boolean> {
         try {
-            
+
+            const getProQuery = `SELECT product_image FROM public.products WHERE id=${productId}`;
+
+            const getProResult = await dbPool.query(getProQuery);
+
+            if (getProResult.rows.length > 0) {
+                const filePath = await path.resolve(getProResult.rows[0].product_image.substr(1));
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+            }
+
             const deleteQuery = `DELETE FROM public.products WHERE id=${productId}`;
 
             const deleteResult = await dbPool.query(deleteQuery);
+
             return deleteResult.rowCount > 0 ? true : false;
 
         } catch (e) {
@@ -91,7 +105,7 @@ export class ProductsRepository implements IProductRepsoitory {
 
     async getProductById(productId: number): Promise<ProductModel[]> {
         try {
-            
+
             let data: ProductModel[] = [];
             const selectQuery = `SELECT 
                                  id AS "productId",

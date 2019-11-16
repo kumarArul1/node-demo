@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 class ProductRoutes {
-  private cityController: ProductsController = new ProductsController();
+  private productsController: ProductsController = new ProductsController();
   router: Router;
   constructor() {
     this.router = Router();
@@ -30,11 +30,11 @@ class ProductRoutes {
   }
 
   init() {
-    this.router.get("/", this.cityController.getProductList);
-    this.router.post("/add", upload.single('productImage'), this.cityController.createProducts);
-    this.router.post("/edit", upload.single('productImage'), this.cityController.updateProducts);
-    this.router.get("/:productId", this.cityController.getProductById);
-    this.router.delete("/:productId", this.cityController.deleteProductById);
+    this.router.get("/", this.productsController.getProductList);
+    this.router.post("/add", upload.single('productImage'), this.productsController.createProducts);
+    this.router.post("/edit", upload.single('productImage'), this.productsController.updateProducts);
+    this.router.get("/:productId", this.productsController.getProductById);
+    this.router.delete("/:productId", this.productsController.deleteProductById);
   }
 }
 const productRoutes = new ProductRoutes();

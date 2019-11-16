@@ -27,12 +27,18 @@ class ProductsController {
 
     public async createProducts(req: Request, res: Response, next: NextFunction) {
         try {
+            // if (req['files']) {
+            //     for (const iterator of req['files']) {
+            //         req.body.productImage = `/${iterator.destination}${iterator.filename}`;
+            //     }
+            // } else {
+            //     req.body.productImage = '/assets/images/noimage.jpeg';
+            // }
             if (req['file']) {
                 req.body.productImage = `/${req['file'].destination}${req['file'].filename}`;
             } else {
                 req.body.productImage = '/assets/images/noimage.jpeg';
             }
-            console.log(req.body.productImage);
             const cityRepository = new ProductsRepository;
             let validateData = Joi.validate(req.body, schema)
             if (validateData.error === null) {
